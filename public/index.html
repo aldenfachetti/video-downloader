@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Video Downloader</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 20px;
+        background-color: #f4f4f4;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        text-align: center;
+      }
+      label {
+        display: block;
+        margin-bottom: 8px;
+      }
+      input[type="text"] {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      button {
+        width: 100%;
+        padding: 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      #result {
+        margin-top: 20px;
+        font-weight: bold;
+        text-align: center;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Video Downloader</h1>
+    <!-- Atualize a interface HTML para incluir um seletor de formato: -->
+    <form id="downloadForm">
+      <label for="url">Enter Video URL:</label>
+      <input
+        type="text"
+        id="url"
+        name="url"
+        placeholder="Paste the video URL here"
+        required
+      />
+
+      <label for="format">Select Format:</label>
+      <select id="format" name="format">
+        <option value="mp4">MP4</option>
+        <option value="webm">WEBM</option>
+        <option value="mkv">MKV</option>
+      </select>
+
+      <button type="submit">Download Video</button>
+    </form>
+    <div id="result"></div>
+
+    <script>
+      document.getElementById("downloadForm").onsubmit = async function (
+        event
+      ) {
+        event.preventDefault();
+        const url = document.getElementById("url").value;
+        const resultDiv = document.getElementById("result");
+        resultDiv.textContent = "Downloading...";
+
+        try {
+          const response = await fetch("/download", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ url: url }),
+          });
+          const result = await response.json();
+          if (response.ok) {
+            resultDiv.textContent = `Download successful! Video saved as: ${result.output}`;
+          } else {
+            resultDiv.textContent = `Error: ${result.error}`;
+          }
+        } catch (error) {
+          resultDiv.textContent = "An error occurred. Please try again.";
+        }
+      };
+    </script>
+  </body>
+</html>
